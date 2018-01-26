@@ -152,7 +152,12 @@ class Counters(object):
   def dumps(self):
     state = {name: counter.value for name, counter in
              self._counters.items()}
-    return json.dumps(state)
+    if isinstance(state, np.generic):
+      return json.dumps(np.asscalar(state))
+    elif isinstance(state, np.ndarray):
+      return json.dumps(state.tolist())
+    else:
+      return json.dumps(state)
 
   def loads(self, encoded_state):
     state = json.loads(encoded_state)
